@@ -19,7 +19,7 @@ npm install
 
 I created a database for testing purposes on AWS, to make it easier to set up the dev environment.
 Make a .env file
-DM me on slack for the host, username, and password
+
 
 
 Then, to start the service
