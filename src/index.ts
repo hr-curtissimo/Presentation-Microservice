@@ -18,14 +18,14 @@ const server = app.listen( port, () => {
         if(error0){
             throw error0
         }else{
-            // tslint:disable-next-line:no-console
+
             console.log("Horray. We connected to RabbitMQ")
         }
         connection.createChannel((error1,channel)=>{
             if (error1) {
               throw error1;
             }else{
-                // tslint:disable-next-line:no-console
+
                 console.log("Horray. We created a channel")
             }
             const queue = 'hello';
@@ -36,10 +36,9 @@ const server = app.listen( port, () => {
             });
 
             channel.sendToQueue(queue, Buffer.from(msg));
-            // tslint:disable-next-line:no-console
             console.log(" [x] Sent %s", msg);
           });
     });
-    // tslint:disable-next-line:no-console
+
     console.log( `server started at http://localhost:${ port }` );
 } );
