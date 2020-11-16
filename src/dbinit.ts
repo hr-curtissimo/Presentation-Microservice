@@ -4,7 +4,7 @@ import {createConnection, QueryError, RowDataPacket} from 'mysql2';
 import * as dotenv from "dotenv"
 dotenv.config();
 import * as bluebird from "bluebird"
-import {createPresentation,state, getAllPresentations, getPresentation, modifyPresentationState} from "./dbcontroller"
+import {createPresentation,state, getAllPresentations, getPresentation, modifyPresentationState, storeEvent} from "./dbcontroller"
 async function init(){
     // connects to database
     const connection = await createConnection({
@@ -74,6 +74,14 @@ async function init(){
     // Retrieves the sample presentation again
     presentation = await getPresentation(connection, "sampleevent", "asdftitle")
     console.log("presentation asdftitle at sampleevent should be approved", presentation[0]);
+
+    await connection.promise().query("CREATE TABLE events (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, event varchar(125), maxpresentations integer)")
+    .catch(console.log)
+    .then(()=>{
+        console.log("event table created")
+    });
+
+    await storeEvent(connection, "sampleevent", 3)
 
     // Kills the connection
     await connection.end();
