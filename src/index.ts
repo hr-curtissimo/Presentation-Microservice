@@ -4,7 +4,9 @@ const port = 8080; // default port to listen
 import {config} from "dotenv";
 import { resolve } from "path";
 config({path:resolve(__dirname,".env")})
-import {connect, Connection, ConfirmChannel, Channel, credentials}  from  'amqplib/callback_api';
+// import {connect, Connection, ConfirmChannel, Channel, credentials}  from  'amqplib/callback_api';
+import {send} from "./send_approvals.js";
+import {receive} from "./receive_events.js"
 import {createConnection, QueryError, RowDataPacket} from 'mysql2';
 
 import * as dotenv from "dotenv"
@@ -12,33 +14,9 @@ dotenv.config();
 import * as bluebird from "bluebird"
 
 
-// Connects to RabbitMQ
-connect('amqp://localhost', (error0, rabbitconnection)=>{
-    if(error0){
-        throw error0
-    }else{
+// starts the rabbitmq channels
 
-        console.log("Horray. We connected to RabbitMQ")
-    }
-    rabbitconnection.createChannel((error1,channel)=>{
-        if (error1) {
-          throw error1;
-        }else{
-
-            console.log("Horray. We created a channel")
-        }
-        const queue = 'hello';
-        const msg = 'Hello world';
-
-        channel.assertQueue(queue, {
-          durable: false
-        });
-
-        channel.sendToQueue(queue, Buffer.from(msg));
-        console.log(" [x] Sent %s", msg);
-      });
-});
-
+receive();
 // Connects to database
 const connection = createConnection({
         host: process.env.DB_HOST,
@@ -52,7 +30,6 @@ connection.connect((err)=>{
           console.error('error connecting to database: ' + err.stack);
           return;
         }
-        console.log("horray, connected to database")
         console.log('connected as id ' + connection.threadId);
 });
 
@@ -84,13 +61,15 @@ app.get("/allpresentations",async (req,res)=>{
 app.patch("/presentation",async (req,res)=>{
     if(req.body.newstate ==="submitted" || req.body.newstate ==="approved" || req.body.newstate === "not-this-year"){
         const data = await modifyPresentationState(connection,req.body.event,req.body.title,req.body.newstate)
+        if(req.body.newstate === "approved"){
+            const tobesent = await getPresentation(connection,req.body.event,req.body.title);
+            send(tobesent[0])
+        }
         res.send("success")
     }else{
         res.send("fail")
     }
-
 })
-
 
 // start the Express server
 const server = app.listen( port, () => {
