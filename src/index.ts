@@ -59,6 +59,8 @@ connection.connect((err)=>{
 app.use(express.urlencoded({type:"application/x-www-form-urlencoded"}))
 import {createPresentation,state, getAllPresentations, getPresentation, modifyPresentationState} from "./dbcontroller"
 
+// Check the readme for more details on how to use these endpoints.
+
 // This endpoint retrieves a single presentation.
 app.get("/presentation", async (req,res)=>{
     const data = await getPresentation(connection,req.body.event,req.body.title)
@@ -66,6 +68,7 @@ app.get("/presentation", async (req,res)=>{
 })
 
 // This endpoint creates a presentation.
+// Right now, it will create a presentation without checking if one already exists at the event with the same title
 app.post("/presentation",async (req,res)=>{
     const data = await createPresentation(connection,req.body)
     res.send(req.body.event)
@@ -78,8 +81,14 @@ app.get("/allpresentations",async (req,res)=>{
 })
 
 // This endpoint changes the state of an existing presentation proposal
-app.patch("/presentation",()=>{
-    console.log("changes the state of a presentation")
+app.patch("/presentation",async (req,res)=>{
+    if(req.body.newstate ==="submitted" || req.body.newstate ==="approved" || req.body.newstate === "not-this-year"){
+        const data = await modifyPresentationState(connection,req.body.event,req.body.title,req.body.newstate)
+        res.send("success")
+    }else{
+        res.send("fail")
+    }
+
 })
 
 
