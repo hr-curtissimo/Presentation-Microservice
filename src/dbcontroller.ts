@@ -18,7 +18,7 @@ export interface Presentation {
 
 // This function must accept a connection object, and an object matching the Presentation interface
 export async function createPresentation(connection:any,data:Presentation){
-    return connection.promise().query("INSERT INTO presentations (event,speakername,email,company,title,synopsis,state) VALUES(?,?,?,?,?,?,?)",[data.event,data.name,data.email,data.company,data.title,data.synopsis,data.state])
+    return connection.promise().query("INSERT INTO presentations (event,speakername,email,company,title,synopsis,state) VALUES(?,?,?,?,?,?,?)",[data.event,data.name,data.email,data.company,data.title,data.synopsis,state.submitted])
     .catch(console.log)
     .then(()=>{
         console.log("presentation created")
