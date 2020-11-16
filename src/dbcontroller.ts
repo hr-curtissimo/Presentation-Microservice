@@ -57,3 +57,7 @@ export async function modifyPresentationState(connection:any,event:string,title:
         return result;
     });
 }
+
+export async function storeEvent(connection:any, event:string, presentationMax:number){
+   return connection.promise().query("INSERT INTO events (event,maxpresentations) VALUES(?,?)",[event,presentationMax])
+}
