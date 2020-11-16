@@ -74,3 +74,16 @@ GET request /allpresentations with a body of shape
 and content-type header of 
 application/x-www-form-urlencoded
 ```
+
+##### To change the state of a presentation:
+```javascript
+PATCH request /presentations with a body of shape
+{
+    event:"eventname",
+    title:"titlename",
+    newstate:"newstate"
+}
+newstate must have the value "submitted, approved, or not-this-year", or the endpoint will do nothing
+Content type header must be
+application/x-www-form-urlencoded
+```
