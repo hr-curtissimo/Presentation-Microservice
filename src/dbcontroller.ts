@@ -61,3 +61,8 @@ export async function modifyPresentationState(connection:any,event:string,title:
 export async function storeEvent(connection:any, event:string, presentationMax:number){
    return connection.promise().query("INSERT INTO events (event,maxpresentations) VALUES(?,?)",[event,presentationMax])
 }
+
+export async function mutateEvent(connection:any, event:string,presentationMax:number){
+    return connection.promise().query("UPDATE events SET maxpresentations=? WHERE event=?",[presentationMax,event]);
+
+}
