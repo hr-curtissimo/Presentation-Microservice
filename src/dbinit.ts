@@ -4,7 +4,7 @@ import {createConnection, QueryError, RowDataPacket} from 'mysql2';
 import * as dotenv from "dotenv"
 dotenv.config();
 import * as bluebird from "bluebird"
-import {createPresentation,state, getAllPresentations, getPresentation, modifyPresentationState, storeEvent} from "./dbcontroller"
+import {createPresentation,state, getAllPresentations, getPresentation, modifyPresentationState, storeEvent, mutateEvent} from "./dbcontroller"
 async function init(){
     // connects to database
     const connection = await createConnection({
@@ -82,6 +82,7 @@ async function init(){
     });
 
     await storeEvent(connection, "sampleevent", 3)
+    await mutateEvent(connection, "sampleevent", 3);
 
     // Kills the connection
     await connection.end();
