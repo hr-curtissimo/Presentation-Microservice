@@ -1,12 +1,13 @@
 import express from "express";
 const app = express();
-const port = 8080; // default port to listen
+const port = 8081; // default port to listen
 import {config} from "dotenv";
 import { resolve } from "path";
 config({path:resolve(__dirname,".env")})
 // import {connect, Connection, ConfirmChannel, Channel, credentials}  from  'amqplib/callback_api';
 import {send} from "./send_approvals.js";
-import {receive} from "./receive_events.js"
+import {receive_event_created} from "./receive_event_created.js"
+import {receive_event_modify} from "./receive_event_modify.js"
 import {createConnection, QueryError, RowDataPacket} from 'mysql2';
 
 import * as dotenv from "dotenv"
@@ -16,7 +17,8 @@ import * as bluebird from "bluebird"
 
 // starts the rabbitmq channels
 
-receive();
+receive_event_modify();
+receive_event_created();
 // Connects to database
 const connection = createConnection({
         host: process.env.DB_HOST,
