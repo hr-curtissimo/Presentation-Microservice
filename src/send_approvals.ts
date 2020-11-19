@@ -4,7 +4,7 @@ import {Presentation} from "./dbcontroller"
 // Connects to RabbitMQ
 
 export function send(msg:Presentation){
-
+console.log(msg,"trying to send message")
 connect('amqp://localhost', (error0, rabbitconnection)=>{
     if(error0){
         throw error0
@@ -16,7 +16,7 @@ connect('amqp://localhost', (error0, rabbitconnection)=>{
           throw error1;
         }
 
-        const exchange = 'approvals';
+        const exchange = 'presentation.approved';
 
         channel.assertExchange(exchange,"fanout", {
           durable: false
